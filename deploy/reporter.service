@@ -1,0 +1,25 @@
+[Unit]
+Description=Print the daily receipt
+Wants=network-online.target
+After=network-online.target time-sync.target
+
+[Service]
+Type=oneshot
+User=@USER@
+SupplementaryGroups=dialout
+WorkingDirectory=@DIR@
+ExecStart=@DIR@/.venv/bin/python -m reporter scheduled
+StateDirectory=reporter
+TimeoutStartSec=20min
+# Out of paper, printer off, crash: try again until the cut-off in the settings,
+# after which the command exits cleanly and the retries stop.
+Restart=on-failure
+RestartSec=2min
+NoNewPrivileges=yes
+ProtectSystem=full
+PrivateTmp=yes
+ProtectHome=read-only
+MemoryMax=400M
+TasksMax=64
+# It runs every five minutes: do not log each start and stop, only what it has to say.
+LogLevelMax=notice

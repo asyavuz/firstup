@@ -1,0 +1,49 @@
+[Unit]
+Description=Receipt printer web interface
+RequiresMountsFor=/var/lib/reporter-web
+
+[Service]
+User=reporter-web
+Environment=WEB_HOST=@HOST@:8444
+ExecStart=/usr/bin/python3 -I /usr/local/lib/reporter-web/start.py
+# systemd hands this over; the service account cannot read the original.
+LoadCredential=password:/etc/reporter-web/password
+UMask=0007
+Restart=no
+
+# Can write the settings and the requests and read the answers. No network and no key.
+PrivateNetwork=yes
+RestrictAddressFamilies=none
+IPAddressDeny=any
+ProtectSystem=strict
+ReadWritePaths=/var/lib/reporter-web/settings /var/lib/reporter-web/requests -/var/lib/reporter-web/phone
+InaccessiblePaths=/tmp /var/tmp -/boot -/run/ssh-unix-local -/var/lib/receipt-inbox -/var/lib/reporter -/etc/letsencrypt -/etc/receipt-inbox
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+KeyringMode=private
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+# Only plain files: nothing that others could trip over or could not clear away.
+SystemCallFilter=~@privileged @resources mkdir mkdirat symlink symlinkat link linkat mknod mknodat chmod fchmod fchmodat fchmodat2 setxattr lsetxattr fsetxattr @aio
+SystemCallErrorNumber=EPERM
+LogRateLimitIntervalSec=60
+LogRateLimitBurst=60
+MemoryMax=160M
+TasksMax=48

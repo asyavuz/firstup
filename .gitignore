@@ -1,0 +1,79 @@
+# One home's own values and secrets, wherever somebody may put them.
+config.local*
+/.printer*
+*.backup.json
+settings.json
+status.json
+paper.json
+result-*.json
+wifi.json
+rail.json
+cloudflare.ini
+events.txt
+reminders.txt
+*.pem
+*.key
+*.p12
+*.crt
+*.cer
+*.ics
+*.shortcut
+/token*
+user-data
+network-config
+firstrun.sh
+custom.toml
+wpa_supplicant*.conf
+id_rsa*
+id_ed25519*
+id_ecdsa*
+.env*
+*.img
+*.img.*
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.log
+
+# Notes and old versions, kept on one computer.
+/HANDOFF.md
+/old/
+*token*.txt
+/log*.txt
+*.nmconnection
+
+# Pictures of receipts; the ones that belong here are in docs/ and assets/.
+*.preview.png
+/*.png
+/*.pbm
+# Photographs can say where they were taken. Add one only after removing that.
+*.jpg
+*.jpeg
+*.heic
+
+# Apple's fonts may not be passed on. See docs/install.md.
+/assets/fonts/
+
+# Python
+__pycache__/
+*.py[cod]
+/.venv*/
+/venv*/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage*
+htmlcov/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.bak
+*.orig
+.DS_Store
+._*
+Thumbs.db

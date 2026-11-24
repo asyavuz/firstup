@@ -1,0 +1,21 @@
+[Unit]
+Description=Do what the receipt printer web interface asked for
+RequiresMountsFor=/var/lib/reporter-web
+# Whatever is put in that folder, this cannot go round and round.
+StartLimitIntervalSec=600
+StartLimitBurst=500
+
+[Service]
+Type=oneshot
+User=@USER@
+SupplementaryGroups=dialout video
+WorkingDirectory=@DIR@
+ExecStart=@DIR@/.venv/bin/python -m reporter requests
+TimeoutStartSec=15min
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/reporter-web/requests /var/lib/reporter-web/out @HOME@/.config/reporter
+PrivateTmp=yes
+MemoryMax=400M
+TasksMax=64
+LogLevelMax=notice

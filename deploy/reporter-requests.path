@@ -1,0 +1,12 @@
+[Unit]
+Description=Requests from the receipt printer web interface
+RequiresMountsFor=/var/lib/reporter-web
+
+[Path]
+DirectoryNotEmpty=/var/lib/reporter-web/requests
+# Something in there that cannot be cleared must not keep the Pi busy.
+TriggerLimitIntervalSec=60
+TriggerLimitBurst=40
+
+[Install]
+WantedBy=paths.target

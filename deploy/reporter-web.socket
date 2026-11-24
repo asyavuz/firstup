@@ -1,0 +1,12 @@
+[Unit]
+Description=Receipt printer web interface
+RequiresMountsFor=/var/lib/reporter-web
+
+[Socket]
+ListenStream=/run/reporter-web.sock
+SocketUser=root
+SocketGroup=reporter-tls
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target

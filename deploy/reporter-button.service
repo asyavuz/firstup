@@ -1,0 +1,19 @@
+[Unit]
+Description=Receipt printer front-panel button
+After=multi-user.target
+
+[Service]
+User=@USER@
+SupplementaryGroups=dialout gpio
+WorkingDirectory=@DIR@
+ExecStart=@DIR@/.venv/bin/python -m reporter button
+Restart=always
+RestartSec=10
+# It uses sudo to shut down, which rules out most other restrictions.
+ProtectSystem=full
+PrivateTmp=yes
+MemoryMax=300M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

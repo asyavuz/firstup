@@ -1,0 +1,8 @@
+# Python 3.11 or newer. The button's gpiozero and lgpio come from apt (deploy/provision.sh):
+# PyPI has no usable lgpio for the Pi and pip would silently install an ancient 0.0.0.2.
+# After a change: pip-compile --generate-hashes --strip-extras requirements.in
+Pillow==13.0.0
+requests==2.34.2
+urllib3>=2.6.3,<3  # older ones can be blown up by nested compression
+pyserial==3.5
+segno==1.6.6

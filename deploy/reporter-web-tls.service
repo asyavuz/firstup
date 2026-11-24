@@ -1,0 +1,52 @@
+[Unit]
+Description=Receipt printer web interface, HTTPS
+After=network.target reporter-web.socket
+Wants=reporter-web.socket
+
+[Service]
+User=reporter-tls
+Environment=WEB_SOCKET=/run/reporter-web.sock
+ExecStart=/usr/bin/python3 -I /usr/local/lib/reporter-web/tls.py
+# systemd hands these over; the service account cannot read the originals.
+LoadCredential=cert.pem:/etc/letsencrypt/live/@HOST@/fullchain.pem
+LoadCredential=key.pem:/etc/letsencrypt/live/@HOST@/privkey.pem
+UMask=0077
+Restart=no
+
+# Passes bytes between the connections systemd hands it and one local socket. It can write
+# nothing and make no network socket of its own. Taken over, it could still turn the one it is
+# handed round and call out with it, but only to the home network (the lists below).
+PrivateNetwork=yes
+RestrictAddressFamilies=AF_UNIX
+ProtectSystem=strict
+InaccessiblePaths=/tmp /var/tmp -/boot -/run/ssh-unix-local -/var/lib/receipt-inbox -/var/lib/reporter -/var/lib/reporter-web -/etc/letsencrypt -/etc/receipt-inbox -/etc/reporter-web -/run/dbus -/run/avahi-daemon
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+KeyringMode=private
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @aio
+IPAddressDeny=any
+IPAddressAllow=localhost 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fe80::/10 fc00::/7
+LimitNOFILE=128
+LogRateLimitIntervalSec=60
+LogRateLimitBurst=60
+MemoryMax=96M
+TasksMax=12

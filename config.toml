@@ -1,0 +1,98 @@
+# What everybody starts with. Put your own values in config.local.toml, which is laid over
+# this and is not in git; see docs/install.md. The web interface, if installed, lies over both.
+# Only train times need a token (.venv/bin/python -m reporter rail-setup).
+timezone = "Europe/London"
+
+# The blocks on the daily receipt, from top to bottom. Remove or reorder freely.
+# There are also: sudoku, departures (a whole hour of trains), health, wifi (with the
+# password) and poster.
+sections = ["header", "warnings", "weather", "pollen", "events", "reminders", "ahead", "trains",
+            "tube", "weekend", "news", "history", "quote", "closing"]
+
+# One receipt a day: each day may appear in one slot only. Whether it is due is checked every
+# five minutes, so use multiples of five. If the Pi was off, offline or out of paper at
+# `time`, it keeps trying until `catch_up_until`; after that the day is skipped rather than
+# printing a stale receipt.
+[[schedule]]
+days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+time = "08:00"
+catch_up_until = "10:00"
+
+[[schedule]]
+days = ["Sat", "Sun"]
+time = "10:00"
+catch_up_until = "12:00"
+
+[printer]
+port = "/dev/serial0"
+baudrate = 19200
+# Heat. Higher is darker. Seen on paper: 65 and 75 print well, 90 smudges, 110 and above
+# squash the print. Choose with `.venv/bin/python -m reporter calibrate`.
+heat_dots = 7
+heat_time = 70
+heat_interval = 40
+density = 10
+break_time = 2
+# Seconds between rows. A row takes 0.027 to send at 19200 baud, so do not go below that.
+row_time = 0.03
+
+[button]
+button_pin = 23  # GPIO numbers
+led_pin = 18
+# How many taps (1 to 9), or seconds of holding (1 to 4), print what: "receipt" or any block.
+# More than one block can have the same press; they come out together.
+taps = { receipt = 1, wifi = 2, departures = 3, poster = 5 }
+holds = { health = 2 }
+
+[events]
+host = ""  # the name on the certificate, if there is one
+
+[weather]
+place = "London"  # a label only
+latitude = 51.5085
+longitude = -0.1257
+uv_from = 3  # the standard guidance: protection is advised from 3
+
+# Met Office regions: se London & South East, ee East of England, em East Midlands,
+# wm West Midlands, ne North East, nw North West, sw South West, yh Yorkshire & Humber,
+# wl Wales, ni Northern Ireland, dg Dumfries, Galloway, Lothian & Borders, st Strathclyde,
+# ta Central, Tayside & Fife, gr Grampian, he Highlands & Eilean Siar, os Orkney & Shetland
+[warnings]
+region = "se"
+
+# Printed only on days that reach this level: moderate, high or very high.
+[pollen]
+level = "moderate"
+kinds = ["grass", "birch", "alder", "mugwort"]
+
+[trains]
+station = "CLJ"  # three-letter codes
+towards = ""     # if set, only trains that call there
+minutes = 60     # how far the block "departures" looks ahead
+# The block "trains": skip trains leaving this many minutes from now, show this many, on
+# these days.
+offset = 0
+count = 3
+days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
+
+[tube]
+favourite = ""  # the line shown first, by name, like "Central"; "" for none
+modes = ["tube", "overground", "elizabeth-line", "dlr"]  # and "tram"
+
+[sudoku]
+level = "medium"  # easy, medium or hard
+
+[news]
+count = 5
+
+[[news.feeds]]
+name = "BBC"
+url = "https://feeds.bbci.co.uk/news/rss.xml"
+
+[[news.feeds]]
+name = "Sky News"
+url = "https://feeds.skynews.com/feeds/rss/home.xml"
+
+[[news.feeds]]
+name = "The Guardian"
+url = "https://www.theguardian.com/uk/rss"

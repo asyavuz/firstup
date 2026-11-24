@@ -1,0 +1,50 @@
+[Unit]
+Description=Receipt printer calendar drop box
+After=network.target
+# A newer token may be there; without that disk the first one must not count again.
+RequiresMountsFor=/var/lib/reporter-web
+
+[Service]
+User=receipt-inbox
+ExecStart=/usr/bin/python3 -I /usr/local/lib/receipt-inbox/receipt_inbox.py
+# systemd hands these over; the service account cannot read the originals.
+LoadCredential=cert.pem:/etc/letsencrypt/live/@HOST@/fullchain.pem
+LoadCredential=key.pem:/etc/letsencrypt/live/@HOST@/privkey.pem
+LoadCredential=token.sha256:/etc/receipt-inbox/token.sha256
+UMask=0007
+Restart=no
+
+# Can write to one folder and talk to the home network. Nothing else.
+ProtectSystem=strict
+ReadWritePaths=/var/lib/receipt-inbox/drop
+ProtectHome=yes
+PrivateTmp=yes
+InaccessiblePaths=/tmp /var/tmp -/boot -/run/ssh-unix-local
+PrivateDevices=yes
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+ProcSubset=pid
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+# Only plain, small files: nothing that others could trip over.
+SystemCallFilter=~@privileged @resources mkdir mkdirat symlink symlinkat link linkat mknod mknodat setxattr lsetxattr fsetxattr @aio
+SystemCallErrorNumber=EPERM
+LimitFSIZE=64K
+IPAddressDeny=any
+IPAddressAllow=localhost 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fe80::/10 fc00::/7
+MemoryMax=80M
+TasksMax=16

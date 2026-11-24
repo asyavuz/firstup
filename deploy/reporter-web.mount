@@ -1,0 +1,12 @@
+[Unit]
+Description=Small disk for the receipt printer web interface
+
+[Mount]
+# A fixed size, so nothing written there can fill the SD card.
+What=/var/lib/reporter-web.img
+Where=/var/lib/reporter-web
+Type=ext4
+Options=loop,nosuid,nodev,noexec,noatime
+
+[Install]
+WantedBy=local-fs.target
